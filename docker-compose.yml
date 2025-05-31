@@ -1,7 +1,9 @@
 version: "3.8"
 services:
   backend:
-    image: suleman43/blog-website-backend:latest
+    build:
+      context: ./backend
+    image: blogging-website_backend
     container_name: backend
     ports:
       - "5000:5000"
@@ -10,7 +12,9 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: suleman43/blog-website-frontend:latest
+    build:
+      context: ./frontend
+    image: blogging-website_frontend
     container_name: frontend
     ports:
       - "80:5173"
