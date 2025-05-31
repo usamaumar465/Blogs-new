@@ -1,25 +1,27 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo "Logging in to ECR..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 690050948477.dkr.ecr.us-east-1.amazonaws.com
-      - REPOSITORY_URI=690050948477.dkr.ecr.us-east-1.amazonaws.com/aws-blog-images
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - export IMAGE_URI=690050948477.dkr.ecr.us-east-1.amazonaws.com/aws-blog-images:$CODEBUILD_BUILD_NUMBER
+
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo "Building Docker image..."
+      - docker build -t $IMAGE_URI .
+
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"backend","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo "Pushing Docker image..."
+      - docker push $IMAGE_URI
+      - echo "{\"name\":\"backend\",\"imageUri\":\"$IMAGE_URI\"}" > imagedefinitions.json
+
 artifacts:
   files:
     - imagedefinitions.json
