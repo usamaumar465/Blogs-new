@@ -1,0 +1,31 @@
+{
+  "AWSEBDockerrunVersion": 3,
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "suleman43/blog-website-frontend:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "containerPort": 5173,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "backend",
+      "image": "suleman43/blog-website-backend:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "containerPort": 5000,
+          "hostPort": 5000,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
