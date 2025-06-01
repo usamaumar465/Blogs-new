@@ -10,6 +10,8 @@ phases:
 
   build:
     commands:
+      - cd frontend
+      - chmod +x node_modules/.bin/*
       - npm run build
 
 artifacts:
