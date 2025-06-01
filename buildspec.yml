@@ -10,9 +10,11 @@ phases:
 
   build:
     commands:
-      - npm run build  # Do NOT cd again — already inside frontend!
+      - cd frontend
+      - chmod -R +x node_modules/.bin   # Fix permissions to avoid exit code 126
+      - npm run build
 
 artifacts:
   files:
-    - frontend/dist/**/*  # Output files to deploy
+    - '**/*'
   base-directory: frontend/dist
