@@ -5,7 +5,7 @@
       "name": "frontend",
       "image": "suleman43/blog-website-frontend:latest",
       "essential": true,
-      "memory": 512,
+      "memory": 256,
       "portMappings": [
         {
           "containerPort": 5173,
@@ -17,7 +17,7 @@
       "name": "backend",
       "image": "suleman43/blog-website-backend:latest",
       "essential": true,
-      "memory": 512,
+      "memory": 256,
       "portMappings": [
         {
           "containerPort": 5000,
