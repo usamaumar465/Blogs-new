@@ -1,16 +1,14 @@
-# frontend/Dockerfile
-
-# Build stage
+# Stage 1: Build Vite app
 FROM node:18-alpine AS build
 WORKDIR /app
 COPY . .
 RUN npm install
 RUN npm run build
 
-# Serve the built frontend using serve
+# Stage 2: Serve using `serve`
 FROM node:18-alpine
-WORKDIR /app
 RUN npm install -g serve
+WORKDIR /app
 COPY --from=build /app/dist .
 EXPOSE 3000
 CMD ["serve", "-s", ".", "-l", "3000"]
