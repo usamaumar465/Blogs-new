@@ -1,28 +1,24 @@
 version: 0.2
 
 phases:
-  pre_build:
+  install:
+    runtime-versions:
+      nodejs: 18
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 690050948477.dkr.ecr.us-east-1.amazonaws.com
-      - export FRONTEND_IMAGE=690050948477.dkr.ecr.us-east-1.amazonaws.com/blog-website-frontend:$CODEBUILD_BUILD_NUMBER
-      - export BACKEND_IMAGE=690050948477.dkr.ecr.us-east-1.amazonaws.com/blog-website-backend:$CODEBUILD_BUILD_NUMBER
-
+      - echo Installing dependencies...
+      - cd frontend
+      - npm install
+      - cd ../backend
+      - npm install
   build:
     commands:
-      - echo Building Docker images...
-      - docker-compose build
-      - docker tag blogging-website_frontend $FRONTEND_IMAGE
-      - docker tag blogging-website_backend $BACKEND_IMAGE
-
-  post_build:
-    commands:
-      - echo Pushing images to Amazon ECR...
-      - docker push $FRONTEND_IMAGE
-      - docker push $BACKEND_IMAGE
-      - echo Creating imagedefinitions.json for ECS...
-      - printf '[{"name":"frontend","imageUri":"%s"},{"name":"backend","imageUri":"%s"}]' $FRONTEND_IMAGE $BACKEND_IMAGE > imagedefinitions.json
-
+      - echo Building frontend...
+      - cd ../frontend
+      - npm run build
+      - echo Preparing backend...
+      - cd ../backend
+      - echo Skipping backend build (if static).
 artifacts:
   files:
-    - imagedefinitions.json
+    - '**/*'
+  base-directory: frontend/dist
