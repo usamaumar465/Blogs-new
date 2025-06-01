@@ -10,11 +10,9 @@ phases:
 
   build:
     commands:
-      - cd frontend
-      - chmod +x node_modules/.bin/*
-      - npm run build
+      - npm run build  # Do NOT cd again — already inside frontend!
 
 artifacts:
   files:
-    - '**/*'
+    - frontend/dist/**/*  # Output files to deploy
   base-directory: frontend/dist
