@@ -1,5 +1,5 @@
 {
-  "AWSEBDockerrunVersion": 3,
+  "AWSEBDockerrunVersion": 2,
   "containerDefinitions": [
     {
       "name": "frontend",
@@ -9,8 +9,7 @@
       "portMappings": [
         {
           "containerPort": 5173,
-          "hostPort": 80,
-          "protocol": "tcp"
+          "hostPort": 80
         }
       ]
     },
@@ -22,8 +21,7 @@
       "portMappings": [
         {
           "containerPort": 5000,
-          "hostPort": 5000,
-          "protocol": "tcp"
+          "hostPort": 5000
         }
       ]
     }
