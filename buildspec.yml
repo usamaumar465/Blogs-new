@@ -28,22 +28,18 @@ phases:
       - echo Building React frontend...
       - cd frontend && npm run build
       - cd ..
-      - echo Creating dist directory...
-      - mkdir -p dist
-      - cp -r frontend/build/* dist/
-      - echo Build completed on `date`
 
   post_build:
     commands:
       - echo Post-build steps...
-      - echo Listing contents of dist directory:
-      - ls -la dist/
+      - echo Listing contents of frontend/dist directory:
+      - ls -la frontend/dist/
       - echo Build process finished successfully
 
 artifacts:
   files:
     - '**/*'
-  base-directory: dist
+  base-directory: frontend/dist
 
 cache:
   paths:
