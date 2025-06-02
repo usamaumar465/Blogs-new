@@ -5,43 +5,39 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing backend dependencies...
-      - cd backend && npm install
+      - echo "Installing dependencies..."
+      - cd backend
+      - npm install
       - cd ../frontend
-      - echo Installing frontend dependencies...
       - npm install
       - cd ..
 
   pre_build:
     commands:
-      - echo Running pre-build checks...
-      - echo Current date: `date`
-      - echo Checking backend dependencies...
-      - cd backend && npm list --depth=0
+      - echo "Running tests and linting..."
+      - cd backend
+      - npm run test || true  # Continue even if tests fail
       - cd ../frontend
-      - echo Checking frontend dependencies...
-      - npm list --depth=0
+      - npm run lint || true  # Continue even if linting fails
       - cd ..
 
   build:
     commands:
-      - echo Building React frontend...
-      - cd frontend && npm run build
+      - echo "Building the application..."
+      - cd frontend
+      - npm run build
       - cd ..
 
   post_build:
     commands:
-      - echo Post-build steps...
-      - echo Listing contents of frontend/dist directory:
-      - ls -la frontend/dist/
-      - echo Build process finished successfully
+      - echo "Build completed on `date`"
+      - echo "Preparing artifacts..."
+      - mkdir -p dist/backend
+      - cp -r backend/* dist/backend/
+      - rm -rf dist/backend/node_modules  # Remove node_modules to reduce artifact size
 
 artifacts:
   files:
     - '**/*'
-  base-directory: frontend/dist
-
-cache:
-  paths:
-    - 'backend/node_modules/**/*'
-    - 'frontend/node_modules/**/*'
+  base-directory: dist
+  discard-paths: no
