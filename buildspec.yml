@@ -6,12 +6,16 @@ phases:
       nodejs: 18
     commands:
       - echo "Installing dependencies..."
-      # Fix permissions for node_modules binaries
-      - npm config set unsafe-perm true
+      # Install frontend dependencies first
       - cd frontend
-      - npm install
-      - cd ../backend
-      - npm install
+      - npm install --scripts-prepend-node-path
+      # Fix permissions for Vite binary
+      - chmod +x node_modules/.bin/vite
+      - cd ..
+      
+      # Install backend dependencies
+      - cd backend
+      - npm install --scripts-prepend-node-path
       - cd ..
 
   pre_build:
@@ -36,13 +40,13 @@ phases:
     commands:
       - echo "Build completed on `date`"
       - echo "Preparing artifacts..."
-      # Copy backend files (from root/backend to dist/backend)
+      # Copy backend files
       - mkdir -p dist/backend
       - cp -r backend/. dist/backend/
       # Remove unnecessary files
       - rm -rf dist/backend/node_modules
       - rm -rf dist/backend/package-lock.json
-      # Copy frontend build output (from frontend/dist to dist/frontend)
+      # Copy frontend build output
       - mkdir -p dist/frontend
       - cp -r frontend/dist/. dist/frontend/
 
