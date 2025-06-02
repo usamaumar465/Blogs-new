@@ -5,16 +5,46 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - cd frontend
-      - npm install
+     - echo Installing dependencies...
+     - cd frontend && npm install
+     - cd ../frontend && npm install
+     - cd . .
 
   build:
     commands:
-      - cd frontend
-      - chmod -R +x node_modules/.bin   # Fix permissions to avoid exit code 126
-      - npm run build
+      - echo Running pre-build checks...
+      - echo Build started on `date`
+      - echo Testing backend dependencies...
+      - cd backend && npm list --depth=0
+      - echo Testing frontend dependencies...
+      - cd ../frontend && npm list --depth=0
+      - cd ..
+
+  build:
+   commands:
+      - echo Building the application...
+      - echo Building React frontend...
+      - cd frontend && npm run build
+      - cd ..
+      - echo Creating deployment package...
+      - mkdir -p dist
+      - cp -r frontend/build/* dist/
+      - echo Build completed on `date`
+
+  post_build:
+    commands:
+      - echo Post-build phase...
+      - echo Listing build artifacts...
+      - ls -la dist/
+      - echo Build process completed successfully
+
 
 artifacts:
   files:
     - '**/*'
-  base-directory: frontend/dist
+  base-directory: 'dist'
+
+  cache:
+  paths:
+    - 'backend/node_modules/**/*'
+    - 'frontend/node_modules/**/*'
