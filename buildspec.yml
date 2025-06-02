@@ -5,46 +5,47 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-     - echo Installing dependencies...
-     - cd frontend && npm install
-     - cd ../frontend && npm install
-     - cd . .
+      - echo Installing backend dependencies...
+      - cd backend && npm install
+      - cd ../frontend
+      - echo Installing frontend dependencies...
+      - npm install
+      - cd ..
+
+  pre_build:
+    commands:
+      - echo Running pre-build checks...
+      - echo Current date: `date`
+      - echo Checking backend dependencies...
+      - cd backend && npm list --depth=0
+      - cd ../frontend
+      - echo Checking frontend dependencies...
+      - npm list --depth=0
+      - cd ..
 
   build:
     commands:
-      - echo Running pre-build checks...
-      - echo Build started on `date`
-      - echo Testing backend dependencies...
-      - cd backend && npm list --depth=0
-      - echo Testing frontend dependencies...
-      - cd ../frontend && npm list --depth=0
-      - cd ..
-
-  build:
-   commands:
-      - echo Building the application...
       - echo Building React frontend...
       - cd frontend && npm run build
       - cd ..
-      - echo Creating deployment package...
+      - echo Creating dist directory...
       - mkdir -p dist
       - cp -r frontend/build/* dist/
       - echo Build completed on `date`
 
   post_build:
     commands:
-      - echo Post-build phase...
-      - echo Listing build artifacts...
+      - echo Post-build steps...
+      - echo Listing contents of dist directory:
       - ls -la dist/
-      - echo Build process completed successfully
-
+      - echo Build process finished successfully
 
 artifacts:
   files:
     - '**/*'
-  base-directory: 'dist'
+  base-directory: dist
 
-  cache:
+cache:
   paths:
     - 'backend/node_modules/**/*'
     - 'frontend/node_modules/**/*'
