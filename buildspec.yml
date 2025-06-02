@@ -6,19 +6,21 @@ phases:
       nodejs: 18
     commands:
       - echo "Installing dependencies..."
-      - cd backend
+      # Fix permissions for node_modules binaries
+      - npm config set unsafe-perm true
+      - cd frontend
       - npm install
-      - cd ../frontend
+      - cd ../backend
       - npm install
       - cd ..
 
   pre_build:
     commands:
       - echo "Running tests and linting..."
-      - cd backend
-      - npm run test || true  # Continue even if tests fail
-      - cd ../frontend
-      - npm run lint || true  # Continue even if linting fails
+      - cd frontend
+      - npm run lint || true
+      - cd ../backend
+      - npm run test || true
       - cd ..
 
   build:
@@ -27,17 +29,24 @@ phases:
       - cd frontend
       - npm run build
       - cd ..
+      # Ensure dist directory exists
+      - mkdir -p dist
 
   post_build:
     commands:
       - echo "Build completed on `date`"
       - echo "Preparing artifacts..."
+      # Copy backend files (from root/backend to dist/backend)
       - mkdir -p dist/backend
-      - cp -r backend/* dist/backend/
-      - rm -rf dist/backend/node_modules  # Remove node_modules to reduce artifact size
+      - cp -r backend/. dist/backend/
+      # Remove unnecessary files
+      - rm -rf dist/backend/node_modules
+      - rm -rf dist/backend/package-lock.json
+      # Copy frontend build output (from frontend/dist to dist/frontend)
+      - mkdir -p dist/frontend
+      - cp -r frontend/dist/. dist/frontend/
 
 artifacts:
   files:
     - '**/*'
   base-directory: dist
-  discard-paths: no
